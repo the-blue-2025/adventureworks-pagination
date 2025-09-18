@@ -1,0 +1,161 @@
+<div class="card shadow-sm border-0">
+  <div class="card-header bg-primary text-white">
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-search me-2"></i>
+        <h5 class="mb-0">Search Products</h5>
+        <span *ngIf="hasSearchCriteria()" class="badge bg-light text-primary ms-2">
+          {{ totalSearchFields() }} active
+        </span>
+      </div>
+      <button 
+        type="button" 
+        class="btn btn-outline-light btn-sm"
+        (click)="onHideSearch()">
+        <i class="bi bi-eye-slash me-1"></i>
+        Hide
+      </button>
+    </div>
+  </div>
+  <div class="card-body">
+    <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
+      <!-- First Row -->
+      <div class="row g-3 mb-3">
+        <div class="col-md-4">
+          <div class="form-floating">
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              formControlName="name"
+              placeholder="Enter product name"
+            />
+            <label for="name">
+              <i class="bi bi-tag me-1"></i>Product Name
+            </label>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-floating">
+            <input
+              type="text"
+              class="form-control"
+              id="productNumber"
+              formControlName="productNumber"
+              placeholder="Enter product number"
+            />
+            <label for="productNumber">
+              <i class="bi bi-hash me-1"></i>Product Number
+            </label>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-floating">
+            <input
+              type="text"
+              class="form-control"
+              id="color"
+              formControlName="color"
+              placeholder="Enter color"
+            />
+            <label for="color">
+              <i class="bi bi-palette me-1"></i>Color
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Second Row -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-3">
+          <div class="form-floating">
+            <input
+              type="text"
+              class="form-control"
+              id="productLine"
+              formControlName="productLine"
+              placeholder="Enter product line"
+            />
+            <label for="productLine">
+              <i class="bi bi-diagram-3 me-1"></i>Product Line
+            </label>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-floating">
+            <input
+              type="text"
+              class="form-control"
+              id="class"
+              formControlName="class"
+              placeholder="Enter class"
+            />
+            <label for="class">
+              <i class="bi bi-collection me-1"></i>Class
+            </label>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-floating">
+            <input
+              type="text"
+              class="form-control"
+              id="style"
+              formControlName="style"
+              placeholder="Enter style"
+            />
+            <label for="style">
+              <i class="bi bi-star me-1"></i>Style
+            </label>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-floating">
+            <input
+              type="text"
+              class="form-control"
+              id="size"
+              formControlName="size"
+              placeholder="Enter size"
+            />
+            <label for="size">
+              <i class="bi bi-rulers me-1"></i>Size
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-center gap-3">
+        <button 
+          type="submit" 
+          class="btn btn-primary btn-lg px-4"
+          [disabled]="isSearching() || !isFormValid()">
+          <span *ngIf="isSearching()" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          <span *ngIf="isSearching()">Searching...</span>
+          <span *ngIf="!isSearching()">
+            <i class="bi bi-search me-2"></i>Search Products
+          </span>
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-outline-secondary btn-lg px-4" 
+          (click)="onClear()"
+          [disabled]="!hasSearchCriteria()">
+          <i class="bi bi-arrow-clockwise me-2"></i>Clear All
+        </button>
+      </div>
+
+      <!-- Search Status -->
+      <div *ngIf="hasSearchCriteria()" class="mt-3">
+        <div class="alert alert-info d-flex align-items-center" role="alert">
+          <i class="bi bi-info-circle me-2"></i>
+          <div>
+            <strong>Search Active:</strong> You have search criteria applied. 
+            <span class="badge bg-primary ms-2">{{ totalSearchFields() }} field(s) selected</span>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

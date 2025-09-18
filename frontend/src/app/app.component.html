@@ -1,0 +1,80 @@
+<div class="min-vh-100 bg-light">
+  <!-- Header Section -->
+  <header class="bg-white shadow-sm border-bottom">
+    <div class="container py-4">
+      <div class="text-center">
+        <h1 class="display-4 text-primary mb-3">
+          <i class="bi bi-shop me-3"></i>
+          {{ title }}
+        </h1>
+        <p class="lead text-muted mb-3">
+          <i class="bi bi-database me-2"></i>
+          Search and filter products from AdventureWorks database
+        </p>
+        <!-- Search Toggle Button -->
+        <div class="d-flex justify-content-center">
+          <button 
+            *ngIf="isSearchSectionCollapsed()"
+            type="button" 
+            class="btn btn-outline-primary btn-lg px-4"
+            (click)="showSearchSection()">
+            <i class="bi bi-search me-2"></i>
+            Show Search
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-12">
+        <!-- Search Section -->
+        <app-product-search
+          *ngIf="!isSearchSectionCollapsed()"
+          (searchCriteria)="onSearch($event)"
+          (clearSearch)="onClearSearch()"
+          (hideSearch)="onHideSearch()">
+        </app-product-search>
+
+        <!-- Error Alert -->
+        <div *ngIf="error()" class="alert alert-danger mt-4 shadow-sm" role="alert">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-exclamation-triangle-fill me-3"></i>
+            <div>
+              <h6 class="alert-heading mb-1">Error Loading Products</h6>
+              <p class="mb-0">{{ error() }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results Section -->
+        <app-product-list
+          [searchResult]="searchResult()"
+          [loading]="loading()"
+          [page]="page()"
+          [pageSize]="pageSize()"
+          (pageChange)="onPageChange($event)"
+          (pageSizeChange)="onPageSizeChange($event)"
+          (sortChange)="onSortChange($event)">
+        </app-product-list>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-top mt-5">
+    <div class="container py-4">
+      <div class="text-center">
+        <p class="text-muted mb-2">
+          <i class="bi bi-code-slash me-2"></i>
+          Built with Angular Signals, Node.js, Express, and MS SQL Server
+        </p>
+        <p class="text-muted mb-0">
+          &copy; 2025 AdventureWorks Products
+        </p>
+      </div>
+    </div>
+  </footer>
+</div>
