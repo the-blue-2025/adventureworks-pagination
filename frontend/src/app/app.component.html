@@ -33,6 +33,7 @@
         <!-- Search Section -->
         <app-product-search
           *ngIf="!isSearchSectionCollapsed()"
+          [currentCriteria]="currentSearchCriteria()"
           (searchCriteria)="onSearch($event)"
           (clearSearch)="onClearSearch()"
           (hideSearch)="onHideSearch()">

@@ -18,7 +18,7 @@
     </div>
   </div>
   <div class="card-body">
-    <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
+    <form (ngSubmit)="onSearch()">
       <!-- First Row -->
       <div class="row g-3 mb-3">
         <div class="col-md-4">
@@ -27,7 +27,8 @@
               type="text"
               class="form-control"
               id="name"
-              formControlName="name"
+              [value]="name()"
+              (input)="updateName($any($event.target).value)"
               placeholder="Enter product name"
             />
             <label for="name">
@@ -41,7 +42,8 @@
               type="text"
               class="form-control"
               id="productNumber"
-              formControlName="productNumber"
+              [value]="productNumber()"
+              (input)="updateProductNumber($any($event.target).value)"
               placeholder="Enter product number"
             />
             <label for="productNumber">
@@ -55,7 +57,8 @@
               type="text"
               class="form-control"
               id="color"
-              formControlName="color"
+              [value]="color()"
+              (input)="updateColor($any($event.target).value)"
               placeholder="Enter color"
             />
             <label for="color">
@@ -73,7 +76,8 @@
               type="text"
               class="form-control"
               id="productLine"
-              formControlName="productLine"
+              [value]="productLine()"
+              (input)="updateProductLine($any($event.target).value)"
               placeholder="Enter product line"
             />
             <label for="productLine">
@@ -87,7 +91,8 @@
               type="text"
               class="form-control"
               id="class"
-              formControlName="class"
+              [value]="class()"
+              (input)="updateClass($any($event.target).value)"
               placeholder="Enter class"
             />
             <label for="class">
@@ -101,7 +106,8 @@
               type="text"
               class="form-control"
               id="style"
-              formControlName="style"
+              [value]="style()"
+              (input)="updateStyle($any($event.target).value)"
               placeholder="Enter style"
             />
             <label for="style">
@@ -115,7 +121,8 @@
               type="text"
               class="form-control"
               id="size"
-              formControlName="size"
+              [value]="size()"
+              (input)="updateSize($any($event.target).value)"
               placeholder="Enter size"
             />
             <label for="size">
@@ -130,7 +137,8 @@
         <button 
           type="submit" 
           class="btn btn-primary btn-lg px-4"
-          [disabled]="isSearching() || !isFormValid()">
+          [disabled]="isSearching() || !isFormValid()"
+          (click)="onSearch()">
           <span *ngIf="isSearching()" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
           <span *ngIf="isSearching()">Searching...</span>
           <span *ngIf="!isSearching()">

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, signal, computed, OnChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal, computed, effect } from '@angular/core';
 import { Product, ProductSearchResult, ProductSearchCriteria } from '../../models/product.model';
 
 type SortDirection = 'asc' | 'desc' | '';
@@ -8,7 +8,7 @@ type SortableColumn = 'ProductID' | 'Name' | 'ProductNumber' | 'Color' | 'ListPr
   selector: 'app-product-list',
   templateUrl: './product-list.component.html'
 })
-export class ProductListComponent implements OnChanges {
+export class ProductListComponent {
   // Private signals
   private _searchResult = signal<ProductSearchResult | null>(null);
   private _loading = signal<boolean>(false);
@@ -46,19 +46,47 @@ export class ProductListComponent implements OnChanges {
   readonly pageSignal = this._page.asReadonly();
   readonly pageSizeSignal = this._pageSize.asReadonly();
 
-  // Computed signals
-  hasResults = computed(() => (this._searchResult()?.totalCount ?? 0) > 0);
-  totalCount = computed(() => this._searchResult()?.totalCount || 0);
-  totalPages = computed(() => {
+  // Enhanced computed signals for comprehensive state management
+  readonly hasResults = computed(() => (this._searchResult()?.totalCount ?? 0) > 0);
+  readonly totalCount = computed(() => this._searchResult()?.totalCount || 0);
+  readonly totalPages = computed(() => {
     const provided = this._searchResult()?.totalPages;
     if (provided && provided > 0) return provided;
     const count = this.totalCount();
     const size = this._pageSize();
     return size > 0 ? Math.ceil(count / size) : 0;
   });
+
+  // Sort state computed signals
+  readonly sortState = computed(() => ({
+    column: this._sortColumn(),
+    direction: this._sortDirection(),
+    isActive: !!(this._sortColumn() && this._sortDirection()),
+    canSort: this.hasResults()
+  }));
+
+  // Pagination state computed signals
+  readonly paginationState = computed(() => ({
+    currentPage: this._page(),
+    pageSize: this._pageSize(),
+    totalPages: this.totalPages(),
+    totalCount: this.totalCount(),
+    hasNextPage: this._page() < this.totalPages(),
+    hasPreviousPage: this._page() > 1,
+    startIndex: (this._page() - 1) * this._pageSize() + 1,
+    endIndex: Math.min(this._page() * this._pageSize(), this.totalCount())
+  }));
+
+  // Loading and data state computed signals
+  readonly dataState = computed(() => ({
+    isLoading: this._loading(),
+    hasData: this.hasResults(),
+    isEmpty: !this._loading() && !this.hasResults(),
+    productCount: this._searchResult()?.products?.length || 0
+  }));
   
-  // Sorted products
-  products = computed(() => {
+  // Sorted products with enhanced sorting logic
+  readonly products = computed(() => {
     const products = this._searchResult()?.products || [];
     const sortColumn = this._sortColumn();
     const sortDirection = this._sortDirection();
@@ -85,6 +113,23 @@ export class ProductListComponent implements OnChanges {
         return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
       }
     });
+  });
+
+  // Computed signal for sort icons
+  readonly sortIcons = computed(() => {
+    const currentColumn = this._sortColumn();
+    const currentDirection = this._sortDirection();
+    
+    return {
+      ProductID: this.getSortIconForColumn('ProductID', currentColumn, currentDirection),
+      Name: this.getSortIconForColumn('Name', currentColumn, currentDirection),
+      ProductNumber: this.getSortIconForColumn('ProductNumber', currentColumn, currentDirection),
+      Color: this.getSortIconForColumn('Color', currentColumn, currentDirection),
+      ListPrice: this.getSortIconForColumn('ListPrice', currentColumn, currentDirection),
+      Size: this.getSortIconForColumn('Size', currentColumn, currentDirection),
+      Weight: this.getSortIconForColumn('Weight', currentColumn, currentDirection),
+      SellStartDate: this.getSortIconForColumn('SellStartDate', currentColumn, currentDirection)
+    };
   });
 
   // Server-side pagination: products() already contains the current page
@@ -130,16 +175,17 @@ export class ProductListComponent implements OnChanges {
     const sortBy = this._sortColumn();
     const sortDir = this._sortDirection();
     if (sortBy && (sortDir === 'asc' || sortDir === 'desc')) {
-      this.sortChange.emit({ sortBy: sortBy as ProductSearchCriteria['sortBy'], sortDir: sortDir as ProductSearchCriteria['sortDir'] });
+      this.sortChange.emit({ 
+        sortBy: sortBy as ProductSearchCriteria['sortBy'], 
+        sortDir: sortDir as ProductSearchCriteria['sortDir'] 
+      });
     } else {
       this.sortChange.emit({ sortBy: undefined, sortDir: undefined });
     }
   }
 
-  getSortIcon(column: SortableColumn | ''): string {
-    const currentColumn = this._sortColumn();
-    const currentDirection = this._sortDirection();
-    
+  // Helper method for sort icons (used by computed signal)
+  private getSortIconForColumn(column: SortableColumn, currentColumn: SortableColumn | '', currentDirection: SortDirection): string {
     if (currentColumn !== column) {
       return 'bi-arrow-down-up'; // Default sort icon
     }
@@ -148,22 +194,42 @@ export class ProductListComponent implements OnChanges {
            currentDirection === 'desc' ? 'bi-arrow-down' : 'bi-arrow-down-up';
   }
 
-  @Output() sortChange = new EventEmitter<{ sortBy: ProductSearchCriteria['sortBy']; sortDir: ProductSearchCriteria['sortDir'] }>();
-
-  ngOnChanges(): void {
-    // Only emit sort changes when sort actually changes, not on every change detection
-    // This prevents infinite loops
+  // Public method for template access (backwards compatibility)
+  getSortIcon(column: SortableColumn | ''): string {
+    const currentColumn = this._sortColumn();
+    const currentDirection = this._sortDirection();
+    return this.getSortIconForColumn(column as SortableColumn, currentColumn, currentDirection);
   }
 
-  formatCurrency(value: number): string {
-    return new Intl.NumberFormat('en-US', {
+  @Output() sortChange = new EventEmitter<{ sortBy: ProductSearchCriteria['sortBy']; sortDir: ProductSearchCriteria['sortDir'] }>();
+
+  constructor() {
+    // No automatic effects needed - sort changes are emitted manually in onSort
+  }
+
+  // Computed signals for utility functions
+  readonly currencyFormatter = computed(() => 
+    new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD'
-    }).format(value);
+    })
+  );
+
+  readonly dateFormatter = computed(() => 
+    new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    })
+  );
+
+  // Utility methods for template
+  formatCurrency(value: number): string {
+    return this.currencyFormatter().format(value);
   }
 
   formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString();
+    return this.dateFormatter().format(new Date(dateString));
   }
 
   getStatusClass(product: Product): string {
@@ -185,4 +251,17 @@ export class ProductListComponent implements OnChanges {
     }
     return 'Active';
   }
+
+  // Computed signal for page size options
+  readonly pageSizeOptions = computed(() => [25, 50, 100]);
+
+  // Computed signal for pagination info
+  readonly paginationInfo = computed(() => {
+    const state = this.paginationState();
+    return {
+      showing: `${state.startIndex}-${state.endIndex}`,
+      total: state.totalCount,
+      page: `${state.currentPage} of ${state.totalPages}`
+    };
+  });
 }

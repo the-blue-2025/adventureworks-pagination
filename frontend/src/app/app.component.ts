@@ -70,6 +70,19 @@ export class AppComponent implements OnInit {
   onSearch(criteria: ProductSearchCriteria): void {
     // Reset pagination when a new search is performed
     this._page.set(1);
+    
+    // Store only the search criteria (without pagination/sorting)
+    const searchOnlyCriteria: ProductSearchCriteria = {
+      name: criteria.name,
+      productNumber: criteria.productNumber,
+      color: criteria.color,
+      productLine: criteria.productLine,
+      class: criteria.class,
+      style: criteria.style,
+      size: criteria.size
+    };
+    this._currentSearchCriteria.set(searchOnlyCriteria);
+    
     this.loadProducts({ ...criteria, page: 1, limit: this._pageSize() });
   }
 
