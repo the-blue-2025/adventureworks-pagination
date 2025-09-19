@@ -194,11 +194,50 @@ export class ProductListComponent {
            currentDirection === 'desc' ? 'bi-arrow-down' : 'bi-arrow-down-up';
   }
 
-  // Public method for template access (backwards compatibility)
-  getSortIcon(column: SortableColumn | ''): string {
+  // Helper method for sort icon classes with colors
+  getSortIconClass(column: SortableColumn): string {
     const currentColumn = this._sortColumn();
     const currentDirection = this._sortDirection();
-    return this.getSortIconForColumn(column as SortableColumn, currentColumn, currentDirection);
+    
+    if (currentColumn !== column) {
+      return 'bi-arrow-down-up text-warning'; // Default sort icon
+    }
+    
+    return currentDirection === 'asc' ? 'bi-arrow-up text-success' : 
+           currentDirection === 'desc' ? 'bi-arrow-down text-danger' : 'bi-arrow-down-up text-warning';
+  }
+
+
+  // Method to check if a column is currently sorted (ng-bootstrap pattern)
+  isSorted(column: SortableColumn): boolean {
+    return this._sortColumn() === column;
+  }
+
+  // Method to get sort icon class (ng-bootstrap pattern)
+  getSortIcon(column: SortableColumn): string {
+    if (this.isSorted(column)) {
+      return this._sortDirection() === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down';
+    }
+    return '';
+  }
+
+  // Method to get tooltip text for sort indicators
+  getSortTooltip(column: SortableColumn): string {
+    const currentColumn = this._sortColumn();
+    const currentDirection = this._sortDirection();
+    
+    if (currentColumn !== column) {
+      return `Click to sort by ${column}`;
+    }
+    
+    switch (currentDirection) {
+      case 'asc':
+        return `Currently sorted by ${column} (Ascending) - Click to sort Descending`;
+      case 'desc':
+        return `Currently sorted by ${column} (Descending) - Click to clear sort`;
+      default:
+        return `Click to sort by ${column}`;
+    }
   }
 
   @Output() sortChange = new EventEmitter<{ sortBy: ProductSearchCriteria['sortBy']; sortDir: ProductSearchCriteria['sortDir'] }>();

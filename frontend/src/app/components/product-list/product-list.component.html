@@ -18,7 +18,7 @@
         </div>
         <div class="text-muted">
           <i class="bi bi-arrow-up-down me-1"></i>
-          <small>Click headers to sort</small>
+          <small>Click headers to sort • <i class="bi bi-arrow-up me-1"></i>Ascending • <i class="bi bi-arrow-down me-1"></i>Descending</small>
         </div>
       </div>
     </div>
@@ -46,36 +46,36 @@
               <tr>
                   <th class="user-select-none" style="cursor: pointer;" (click)="onSort('ProductID')">
                     Product ID
-                    <i class="bi {{ sortIcons().ProductID }} ms-1"></i>
+                    <span *ngIf="isSorted('ProductID')" [ngClass]="getSortIcon('ProductID')" class="ms-1" [title]="getSortTooltip('ProductID')"></span>
                   </th>
                   <th class="user-select-none" style="cursor: pointer;" (click)="onSort('Name')">
                     Name
-                    <i class="bi {{ sortIcons().Name }} ms-1"></i>
+                    <span *ngIf="isSorted('Name')" [ngClass]="getSortIcon('Name')" class="ms-1" [title]="getSortTooltip('Name')"></span>
                   </th>
                   <th class="user-select-none" style="cursor: pointer;" (click)="onSort('ProductNumber')">
                     Product Number
-                    <i class="bi {{ sortIcons().ProductNumber }} ms-1"></i>
+                    <span *ngIf="isSorted('ProductNumber')" [ngClass]="getSortIcon('ProductNumber')" class="ms-1" [title]="getSortTooltip('ProductNumber')"></span>
                   </th>
                   <th class="user-select-none" style="cursor: pointer;" (click)="onSort('Color')">
                     Color
-                    <i class="bi {{ sortIcons().Color }} ms-1"></i>
+                    <span *ngIf="isSorted('Color')" [ngClass]="getSortIcon('Color')" class="ms-1" [title]="getSortTooltip('Color')"></span>
                   </th>
                   <th class="user-select-none" style="cursor: pointer;" (click)="onSort('ListPrice')">
                     List Price
-                    <i class="bi {{ sortIcons().ListPrice }} ms-1"></i>
+                    <span *ngIf="isSorted('ListPrice')" [ngClass]="getSortIcon('ListPrice')" class="ms-1" [title]="getSortTooltip('ListPrice')"></span>
                   </th>
                   <th class="user-select-none" style="cursor: pointer;" (click)="onSort('Size')">
                     Size
-                    <i class="bi {{ sortIcons().Size }} ms-1"></i>
+                    <span *ngIf="isSorted('Size')" [ngClass]="getSortIcon('Size')" class="ms-1" [title]="getSortTooltip('Size')"></span>
                   </th>
                   <th class="user-select-none" style="cursor: pointer;" (click)="onSort('Weight')">
                     Weight
-                    <i class="bi {{ sortIcons().Weight }} ms-1"></i>
+                    <span *ngIf="isSorted('Weight')" [ngClass]="getSortIcon('Weight')" class="ms-1" [title]="getSortTooltip('Weight')"></span>
                   </th>
                   <th>Status</th>
                   <th class="user-select-none" style="cursor: pointer;" (click)="onSort('SellStartDate')">
                     Sell Start Date
-                    <i class="bi {{ sortIcons().SellStartDate }} ms-1"></i>
+                    <span *ngIf="isSorted('SellStartDate')" [ngClass]="getSortIcon('SellStartDate')" class="ms-1" [title]="getSortTooltip('SellStartDate')"></span>
                   </th>
               </tr>
             </thead>
@@ -83,7 +83,9 @@
               <tr *ngFor="let product of (searchResultSignal()?.products || [])">
                 <td>{{ product.ProductID }}</td>
                 <td>
-                  <strong>{{ product.Name }}</strong>
+                  <a [routerLink]="['/product', product.ProductID]" class="text-decoration-none">
+                    <strong class="text-primary">{{ product.Name }}</strong>
+                  </a>
                   <br>
                   <small class="text-muted">{{ product.ProductNumber }}</small>
                 </td>

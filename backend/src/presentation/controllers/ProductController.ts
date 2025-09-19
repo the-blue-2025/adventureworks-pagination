@@ -72,4 +72,26 @@ export class ProductController {
       res.status(500).json({ error: 'Internal server error' });
     }
   }
+
+  async getProductInventory(req: Request, res: Response): Promise<void> {
+    try {
+      const productId = parseInt(req.params.id);
+      const inventory = await this.productService.getProductInventory(productId);
+      res.json(inventory);
+    } catch (error) {
+      console.error('Error fetching product inventory:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
+  async getProductPriceHistory(req: Request, res: Response): Promise<void> {
+    try {
+      const productId = parseInt(req.params.id);
+      const priceHistory = await this.productService.getProductPriceHistory(productId);
+      res.json(priceHistory);
+    } catch (error) {
+      console.error('Error fetching product price history:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
 }

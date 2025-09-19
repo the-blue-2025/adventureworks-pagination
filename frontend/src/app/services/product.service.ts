@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Product, ProductSearchCriteria, ProductSearchResult } from '../models/product.model';
+import { Product, ProductSearchCriteria, ProductSearchResult, ProductInventory, ProductListPriceHistory } from '../models/product.model';
 
 @Injectable({
   providedIn: 'root'
@@ -41,5 +41,13 @@ export class ProductService {
 
   getProductById(id: number): Observable<Product> {
     return this.http.get<Product>(`${this.apiUrl}/${id}`);
+  }
+
+  getProductInventory(productId: number): Observable<ProductInventory[]> {
+    return this.http.get<ProductInventory[]>(`${this.apiUrl}/${productId}/inventory`);
+  }
+
+  getProductPriceHistory(productId: number): Observable<ProductListPriceHistory[]> {
+    return this.http.get<ProductListPriceHistory[]>(`${this.apiUrl}/${productId}/price-history`);
   }
 }

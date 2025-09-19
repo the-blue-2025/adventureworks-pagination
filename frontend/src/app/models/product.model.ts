@@ -46,3 +46,21 @@ export interface ProductSearchResult {
   currentPage: number;
   totalPages: number;
 }
+
+export interface ProductInventory {
+  ProductID: number;
+  LocationID: number;
+  Shelf: string;
+  Bin: number;
+  Quantity: number;
+  rowguid: string;
+  ModifiedDate: string;
+}
+
+export interface ProductListPriceHistory {
+  ProductID: number;
+  StartDate: string;
+  EndDate?: string;
+  ListPrice: number;
+  ModifiedDate: string;
+}

@@ -25,4 +25,6 @@ export interface IProductRepository {
   findAll(criteria?: ProductSearchCriteria): Promise<ProductSearchResult>;
   findById(id: number): Promise<Product | null>;
   search(criteria: ProductSearchCriteria): Promise<ProductSearchResult>;
+  findInventoryByProductId(productId: number): Promise<any[]>;
+  findPriceHistoryByProductId(productId: number): Promise<any[]>;
 }

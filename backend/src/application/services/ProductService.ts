@@ -20,4 +20,12 @@ export class ProductService {
   async searchProducts(criteria: ProductSearchCriteria): Promise<ProductSearchResult> {
     return await this.productRepository.search(criteria);
   }
+
+  async getProductInventory(productId: number): Promise<any[]> {
+    return await this.productRepository.findInventoryByProductId(productId);
+  }
+
+  async getProductPriceHistory(productId: number): Promise<any[]> {
+    return await this.productRepository.findPriceHistoryByProductId(productId);
+  }
 }

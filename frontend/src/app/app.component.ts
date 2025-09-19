@@ -1,4 +1,6 @@
 import { Component, OnInit, signal, computed } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { ProductService } from './services/product.service';
 import { Product, ProductSearchCriteria, ProductSearchResult } from './models/product.model';
 
@@ -34,11 +36,24 @@ export class AppComponent implements OnInit {
   // Computed signals
   hasResults = computed(() => (this._searchResult()?.products.length ?? 0) > 0);
   totalProducts = computed(() => this._searchResult()?.totalCount || 0);
+  isHomePage = computed(() => this._currentUrl() === '/');
 
-  constructor(private productService: ProductService) {}
+  private _currentUrl = signal<string>('/');
+
+  constructor(
+    private productService: ProductService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadProducts();
+    
+    // Track route changes
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event) => {
+        this._currentUrl.set((event as NavigationEnd).url);
+      });
   }
 
   loadProducts(criteria?: ProductSearchCriteria): void {

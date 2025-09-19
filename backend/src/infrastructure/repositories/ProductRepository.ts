@@ -1,6 +1,7 @@
 import { Op } from 'sequelize';
 import { Product } from '../../domain/entities/Product';
 import { IProductRepository, ProductSearchCriteria, ProductSearchResult } from '../../domain/repositories/IProductRepository';
+import sequelize from '../../config/database';
 
 export class ProductRepository implements IProductRepository {
   async findAll(criteria?: ProductSearchCriteria): Promise<ProductSearchResult> {
@@ -77,4 +78,49 @@ export class ProductRepository implements IProductRepository {
   async search(criteria: ProductSearchCriteria): Promise<ProductSearchResult> {
     return this.findAll(criteria);
   }
+
+  async findInventoryByProductId(productId: number): Promise<any[]> {
+    const query = `
+      SELECT 
+        ProductID,
+        LocationID,
+        Shelf,
+        Bin,
+        Quantity,
+        rowguid,
+        ModifiedDate
+      FROM Production.ProductInventory 
+      WHERE ProductID = :productId
+      ORDER BY LocationID, Shelf, Bin
+    `;
+    
+    const results = await sequelize.query(query, {
+      replacements: { productId },
+      type: sequelize.QueryTypes.SELECT
+    });
+    
+    return results as any[];
+  }
+
+  async findPriceHistoryByProductId(productId: number): Promise<any[]> {
+    const query = `
+      SELECT 
+        ProductID,
+        StartDate,
+        EndDate,
+        ListPrice,
+        ModifiedDate
+      FROM Production.ProductListPriceHistory 
+      WHERE ProductID = :productId
+      ORDER BY StartDate DESC
+    `;
+    
+    const results = await sequelize.query(query, {
+      replacements: { productId },
+      type: sequelize.QueryTypes.SELECT
+    });
+    
+    return results as any[];
+  }
+
 }

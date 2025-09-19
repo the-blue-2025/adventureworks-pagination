@@ -6,7 +6,11 @@ A modern single-page web application built with Angular, Node.js, TypeScript, Ex
 
 - **Product Search**: Search products by name, product number, color, product line, class, style, and size
 - **Server-side Pagination**: Navigate through products with configurable page sizes (25, 50, 100 items per page)
-- **Server-side Sorting**: Click any column header to sort products (ascending, descending, or unsorted)
+- **Enhanced Server-side Sorting**: Click any column header to sort products with visual indicators
+  - 🟢 Green up arrows (↑) for ascending sort
+  - 🔴 Red down arrows (↓) for descending sort  
+  - 🟡 Yellow up-down arrows (↕) for unsorted columns
+  - Interactive tooltips showing current sort state and next action
 - **State Persistence**: Sort order and search criteria are maintained when navigating between pages
 - **Responsive Design**: Built with ng-bootstrap for a modern, mobile-friendly interface
 - **Angular Signals**: Modern reactive state management with signals and computed values
@@ -14,6 +18,11 @@ A modern single-page web application built with Angular, Node.js, TypeScript, Ex
 - **Domain Driven Design**: Clean architecture with separation of concerns
 - **TypeScript**: Full type safety across frontend and backend
 - **Real-time Search**: Instant search results with loading states and error handling
+- **Enhanced User Experience**: 
+  - Color-coded sorting indicators for immediate visual feedback
+  - Interactive tooltips providing contextual help
+  - Visual legend showing sort direction meanings
+  - Responsive design optimized for all screen sizes
 
 ## Tech Stack
 
@@ -115,7 +124,11 @@ adventureworks-pagination/
 1. Open your browser and navigate to `http://localhost:4200`
 2. Use the search form to filter products by various criteria
 3. Click "Search" to apply filters or "Clear" to reset
-4. Click any column header to sort products (ascending → descending → unsorted)
+4. Click any column header to sort products with visual feedback:
+   - First click: Sort ascending (🟢 green up arrow)
+   - Second click: Sort descending (🔴 red down arrow)  
+   - Third click: Clear sort (🟡 yellow up-down arrow)
+   - Hover over column headers to see helpful tooltips
 5. Use the page size selector to choose 25, 50, or 100 items per page
 6. Navigate between pages using the pagination controls at the bottom
 7. Sort order and search criteria are automatically preserved when changing pages
@@ -161,7 +174,7 @@ This application follows Domain Driven Design (DDD) principles with modern Angul
 - **Component-based**: Modular components with clear separation of concerns
 - **Service Layer**: HTTP services for API communication
 - **Server-side Pagination**: Efficient data loading with ng-bootstrap pagination controls
-- **Server-side Sorting**: Column sorting with state persistence across page navigation
+- **Enhanced Server-side Sorting**: Column sorting with visual indicators, tooltips, and state persistence across page navigation
 - **Modern Angular**: Uses latest Angular 16 features including control flow syntax
 
 ## Contributing

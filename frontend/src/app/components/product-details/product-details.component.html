@@ -1,0 +1,315 @@
+<div class="container-fluid py-4">
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="text-center py-5">
+    <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <h5 class="text-muted">Loading product details...</h5>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error()" class="alert alert-danger" role="alert">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    {{ error() }}
+    <button type="button" class="btn btn-outline-danger btn-sm ms-3" (click)="goBack()">
+      <i class="bi bi-arrow-left me-1"></i>Go Back
+    </button>
+  </div>
+
+  <!-- Product Details -->
+  <div *ngIf="!loading() && !error() && product()" class="row">
+    <!-- Back Button -->
+    <div class="col-12 mb-3">
+      <button type="button" class="btn btn-outline-secondary" (click)="goBack()">
+        <i class="bi bi-arrow-left me-1"></i>Back to Products
+      </button>
+    </div>
+
+    <!-- Product Information Section -->
+    <div class="col-12 mb-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white">
+          <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">
+              <i class="bi bi-box me-2"></i>
+              Product Details
+            </h4>
+            <span [class]="getStatusClass(product()!)" class="badge">
+              {{ getStatusText(product()!) }}
+            </span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <h5 class="text-primary mb-3">{{ product()!.Name }}</h5>
+              <table class="table table-borderless">
+                <tbody>
+                  <tr>
+                    <td class="fw-bold text-muted">Product ID:</td>
+                    <td>{{ product()!.ProductID }}</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold text-muted">Product Number:</td>
+                    <td><code>{{ product()!.ProductNumber }}</code></td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold text-muted">Color:</td>
+                    <td>
+                      <span *ngIf="product()!.Color" class="badge bg-info">{{ product()!.Color }}</span>
+                      <span *ngIf="!product()!.Color" class="text-muted">N/A</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold text-muted">Size:</td>
+                    <td>
+                      <span *ngIf="product()!.Size">{{ product()!.Size }} {{ product()!.SizeUnitMeasureCode }}</span>
+                      <span *ngIf="!product()!.Size" class="text-muted">N/A</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold text-muted">Weight:</td>
+                    <td>
+                      <span *ngIf="product()!.Weight">{{ product()!.Weight }} {{ product()!.WeightUnitMeasureCode }}</span>
+                      <span *ngIf="!product()!.Weight" class="text-muted">N/A</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-md-6">
+              <h6 class="text-primary mb-3">Pricing & Inventory</h6>
+              <table class="table table-borderless">
+                <tbody>
+                  <tr>
+                    <td class="fw-bold text-muted">List Price:</td>
+                    <td class="h5 text-success">{{ formatCurrency(product()!.ListPrice) }}</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold text-muted">Standard Cost:</td>
+                    <td>{{ formatCurrency(product()!.StandardCost) }}</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold text-muted">Safety Stock Level:</td>
+                    <td>{{ product()!.SafetyStockLevel }}</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold text-muted">Reorder Point:</td>
+                    <td>{{ product()!.ReorderPoint }}</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold text-muted">Days to Manufacture:</td>
+                    <td>{{ product()!.DaysToManufacture }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div class="row mt-3">
+            <div class="col-12">
+              <h6 class="text-primary mb-3">Product Information</h6>
+              <div class="row">
+                <div class="col-md-4">
+                  <table class="table table-borderless table-sm">
+                    <tbody>
+                      <tr>
+                        <td class="fw-bold text-muted">Product Line:</td>
+                        <td>{{ product()!.ProductLine || 'N/A' }}</td>
+                      </tr>
+                      <tr>
+                        <td class="fw-bold text-muted">Class:</td>
+                        <td>{{ product()!.Class || 'N/A' }}</td>
+                      </tr>
+                      <tr>
+                        <td class="fw-bold text-muted">Style:</td>
+                        <td>{{ product()!.Style || 'N/A' }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="col-md-4">
+                  <table class="table table-borderless table-sm">
+                    <tbody>
+                      <tr>
+                        <td class="fw-bold text-muted">Sell Start Date:</td>
+                        <td>{{ formatDate(product()!.SellStartDate) }}</td>
+                      </tr>
+                      <tr>
+                        <td class="fw-bold text-muted">Sell End Date:</td>
+                        <td>{{ formatDate(product()!.SellEndDate) }}</td>
+                      </tr>
+                      <tr>
+                        <td class="fw-bold text-muted">Discontinued Date:</td>
+                        <td>{{ formatDate(product()!.DiscontinuedDate) }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="col-md-4">
+                  <table class="table table-borderless table-sm">
+                    <tbody>
+                      <tr>
+                        <td class="fw-bold text-muted">Make Flag:</td>
+                        <td>
+                          <span [class]="product()!.MakeFlag ? 'badge bg-success' : 'badge bg-secondary'">
+                            {{ product()!.MakeFlag ? 'Yes' : 'No' }}
+                          </span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="fw-bold text-muted">Finished Goods:</td>
+                        <td>
+                          <span [class]="product()!.FinishedGoodsFlag ? 'badge bg-success' : 'badge bg-secondary'">
+                            {{ product()!.FinishedGoodsFlag ? 'Yes' : 'No' }}
+                          </span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="fw-bold text-muted">Modified Date:</td>
+                        <td>{{ formatDate(product()!.ModifiedDate) }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs Section -->
+    <div class="col-12">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-light border-bottom">
+          <ul class="nav nav-tabs card-header-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button 
+                class="nav-link" 
+                [class.active]="activeTab() === 'inventory'"
+                (click)="setActiveTab('inventory')"
+                type="button">
+                <i class="bi bi-boxes me-1"></i>
+                Product Inventory
+                <span *ngIf="hasInventory()" class="badge bg-primary ms-1">{{ inventory().length }}</span>
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button 
+                class="nav-link" 
+                [class.active]="activeTab() === 'priceHistory'"
+                (click)="setActiveTab('priceHistory')"
+                type="button">
+                <i class="bi bi-graph-up me-1"></i>
+                Price History
+                <span *ngIf="hasPriceHistory()" class="badge bg-primary ms-1">{{ priceHistory().length }}</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+        <div class="card-body">
+          <!-- Inventory Tab -->
+          <div *ngIf="activeTab() === 'inventory'">
+            <div *ngIf="!hasInventory()" class="text-center py-4">
+              <i class="bi bi-boxes text-muted" style="font-size: 3rem;"></i>
+              <h5 class="text-muted mt-3">No Inventory Data</h5>
+              <p class="text-muted">This product doesn't have inventory information in the database.</p>
+              <div class="alert alert-info mt-3">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Note:</strong> Not all products in AdventureWorks have inventory data. 
+                Try products like 
+                <span *ngFor="let productId of getSuggestedProducts().slice(0, 3); let last = last">
+                  <a [routerLink]="['/product', productId]" class="alert-link">Product {{ productId }}</a>{{ last ? '' : ', ' }}
+                </span>
+                which typically have inventory information.
+              </div>
+            </div>
+            
+            <div *ngIf="hasInventory()">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0">Inventory Locations</h6>
+                <span class="badge bg-info">
+                  Total Quantity: {{ totalInventory() }}
+                </span>
+              </div>
+              
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Location ID</th>
+                      <th>Shelf</th>
+                      <th>Bin</th>
+                      <th>Quantity</th>
+                      <th>Modified Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of inventory()">
+                      <td>{{ item.LocationID }}</td>
+                      <td><code>{{ item.Shelf }}</code></td>
+                      <td>{{ item.Bin }}</td>
+                      <td>
+                        <span class="badge" [class]="item.Quantity > 0 ? 'bg-success' : 'bg-warning'">
+                          {{ item.Quantity }}
+                        </span>
+                      </td>
+                      <td>{{ formatDate(item.ModifiedDate) }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Price History Tab -->
+          <div *ngIf="activeTab() === 'priceHistory'">
+            <div *ngIf="!hasPriceHistory()" class="text-center py-4">
+              <i class="bi bi-graph-up text-muted" style="font-size: 3rem;"></i>
+              <h5 class="text-muted mt-3">No Price History</h5>
+              <p class="text-muted">This product doesn't have price history information in the database.</p>
+              <div class="alert alert-info mt-3">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Note:</strong> Not all products in AdventureWorks have price history data. 
+                Try products like 
+                <span *ngFor="let productId of getSuggestedProducts().slice(0, 3); let last = last">
+                  <a [routerLink]="['/product', productId]" class="alert-link">Product {{ productId }}</a>{{ last ? '' : ', ' }}
+                </span>
+                which typically have price history information.
+              </div>
+            </div>
+            
+            <div *ngIf="hasPriceHistory()">
+              <h6 class="mb-3">Price History</h6>
+              
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Start Date</th>
+                      <th>End Date</th>
+                      <th>List Price</th>
+                      <th>Modified Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let price of priceHistory()">
+                      <td>{{ formatDate(price.StartDate) }}</td>
+                      <td>
+                        <span *ngIf="price.EndDate">{{ formatDate(price.EndDate) }}</span>
+                        <span *ngIf="!price.EndDate" class="badge bg-success">Current</span>
+                      </td>
+                      <td class="fw-bold text-success">{{ formatCurrency(price.ListPrice) }}</td>
+                      <td>{{ formatDate(price.ModifiedDate) }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
